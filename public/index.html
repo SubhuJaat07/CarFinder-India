@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NearbyCars Live - Find Cars Near You in India</title>
-  <meta name="description" content="Discover the best cars near you in India. Browse supercars, luxury sedans, SUVs and more with live location-based dealer discovery.">
+  <title>Cars24 India - Buy Best Cars Near You</title>
+  <meta name="description" content="India's trusted car marketplace. Browse new and pre-owned cars near you. Best ex-showroom prices, verified dealers, and instant order booking.">
 
   <!-- Favicon -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚗</text></svg>">
@@ -28,13 +28,23 @@
   <nav class="navbar" id="navbar">
     <div class="nav-container">
       <a href="#" class="nav-brand">
-        <span class="nav-logo">🚗</span>
-        <span class="nav-title">NearbyCars <span class="accent">Live</span></span>
+        <div class="nav-logo-wrapper">
+          <svg class="nav-logo-svg" viewBox="0 0 32 32" fill="none">
+            <rect width="32" height="32" rx="8" fill="#E23744"/>
+            <text x="16" y="22" text-anchor="middle" fill="white" font-size="16" font-weight="900" font-family="Inter,sans-serif">C</text>
+          </svg>
+        </div>
+        <div class="nav-title-group">
+          <span class="nav-title">Cars24</span>
+          <span class="nav-subtitle">India</span>
+        </div>
       </a>
       <div class="nav-links">
-        <a href="#cars-section" class="nav-link">Browse Cars</a>
+        <a href="#cars-section" class="nav-link active">Buy Cars</a>
         <a href="#how-it-works" class="nav-link">How It Works</a>
-        <a href="#" class="nav-link" id="nav-locate-btn">📍 My Location</a>
+        <a href="#" class="nav-link nav-locate-link" id="nav-locate-btn">
+          <i data-lucide="locate" class="icon-sm"></i> My Location
+        </a>
       </div>
       <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Toggle menu">
         <i data-lucide="menu" class="icon"></i>
@@ -42,11 +52,27 @@
     </div>
     <!-- Mobile Menu -->
     <div class="mobile-menu" id="mobile-menu">
-      <a href="#cars-section" class="mobile-link">Browse Cars</a>
+      <a href="#cars-section" class="mobile-link">Buy Cars</a>
       <a href="#how-it-works" class="mobile-link">How It Works</a>
-      <a href="#" class="mobile-link" id="mobile-locate-btn">📍 My Location</a>
+      <a href="#" class="mobile-link" id="mobile-locate-btn">
+        <i data-lucide="locate" class="icon-sm"></i> My Location
+      </a>
     </div>
   </nav>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!--           LOCATION OVERLAY                   -->
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- This shows on first load to request location -->
+  <div class="location-overlay" id="location-overlay" style="display:none;">
+    <div class="location-overlay-content">
+      <div class="location-overlay-spinner">
+        <div class="spinner-large"></div>
+      </div>
+      <h2>Detecting your location...</h2>
+      <p>Please allow location access to see the best car deals near you</p>
+    </div>
+  </div>
 
   <!-- ═══════════════════════════════════════════ -->
   <!--              HERO SECTION                  -->
@@ -54,79 +80,93 @@
   <section class="hero" id="hero">
     <div class="hero-bg"></div>
     <div class="hero-content">
+      <!-- Location Status Banner -->
+      <div class="location-banner" id="location-banner">
+        <div class="banner-spinner" id="banner-spinner">
+          <div class="spinner"></div>
+          <span>Finding cars near you...</span>
+        </div>
+        <div class="banner-success" id="banner-success" style="display:none;">
+          <i data-lucide="check-circle" class="icon green"></i>
+          <span id="location-text">Location detected</span>
+        </div>
+        <div class="banner-denied" id="banner-denied" style="display:none;">
+          <i data-lucide="alert-circle" class="icon red"></i>
+          <span>
+            Oops! We cannot show nearby cars without your location.
+            Please refresh this page and tap "Allow" to see cars near you.
+          </span>
+          <button class="btn btn-sm btn-primary" id="retry-location-btn">
+            <i data-lucide="refresh-cw" class="icon-sm"></i> Retry
+          </button>
+        </div>
+      </div>
+
       <div class="hero-badge">
-        <i data-lucide="map-pin" class="icon-sm"></i>
+        <span class="badge-dot"></span>
         Live Location-Based Discovery
       </div>
       <h1 class="hero-title">
-        Find <span class="gradient-text">Amazing Cars</span><br>
-        Near You in India
+        Find Your Perfect <span class="gradient-text">Dream Car</span><br>
+        At The Best Price Near You
       </h1>
       <p class="hero-subtitle">
-        Discover supercars, luxury sedans, SUVs and more from trusted dealers around you.
-        Get ex-showroom prices, dealer info, and order your dream car today.
+        Browse India's largest collection of new cars from verified dealers.
+        Get ex-showroom prices, compare models, and book a test drive today.
       </p>
 
-      <!-- Location Button -->
       <div class="hero-actions">
-        <button class="btn btn-primary btn-lg" id="hero-locate-btn">
-          <i data-lucide="crosshair" class="icon"></i>
-          Find Cars Near Me
-        </button>
-        <a href="#cars-section" class="btn btn-outline btn-lg">
+        <a href="#cars-section" class="btn btn-primary btn-lg hero-cta">
           <i data-lucide="search" class="icon"></i>
-          Browse All
+          Explore All Cars
         </a>
+        <button class="btn btn-outline btn-lg" id="hero-locate-btn">
+          <i data-lucide="crosshair" class="icon"></i>
+          Use My Location
+        </button>
       </div>
 
       <!-- User Name Input -->
       <div class="hero-name-section" id="name-section">
-        <p class="name-label">Enter your name for personalized results</p>
+        <p class="name-label">Enter your name to get personalized offers</p>
         <div class="name-input-group">
           <i data-lucide="user" class="icon"></i>
           <input type="text" id="user-name-input" class="name-input" placeholder="Your Name" maxlength="50" autocomplete="off">
-          <button class="btn btn-sm btn-accent" id="submit-name-btn">Go</button>
-        </div>
-      </div>
-
-      <!-- Location Status -->
-      <div class="location-status" id="location-status">
-        <div class="location-spinner" id="location-spinner">
-          <div class="spinner"></div>
-          <span>Finding cars near you...</span>
-        </div>
-        <div class="location-info" id="location-info" style="display:none;">
-          <i data-lucide="map-pin" class="icon green"></i>
-          <span id="location-text">Location detected</span>
-        </div>
-        <div class="location-denied" id="location-denied" style="display:none;">
-          <i data-lucide="alert-triangle" class="icon red"></i>
-          <div>
-            <p><strong>Location access needed!</strong></p>
-            <p class="small">Sorry, hum aapke aas-paas ki best cars dikhane ke liye accurate location ki zarurat hai. Please allow location access to continue.<br><em>(We need your location to show nearby cars and dealers)</em></p>
-            <button class="btn btn-sm btn-accent" id="retry-location-btn">Retry</button>
-          </div>
+          <button class="btn btn-sm btn-primary" id="submit-name-btn">
+            <i data-lucide="arrow-right" class="icon-sm"></i>
+          </button>
         </div>
       </div>
     </div>
 
-    <!-- Hero Stats -->
-    <div class="hero-stats">
-      <div class="stat">
-        <span class="stat-number">500+</span>
-        <span class="stat-label">Cars Listed</span>
+    <!-- Trust Indicators -->
+    <div class="hero-trust">
+      <div class="trust-item">
+        <div class="trust-icon">
+          <i data-lucide="shield-check" class="icon"></i>
+        </div>
+        <div class="trust-text">
+          <strong>Verified Dealers</strong>
+          <span>All dealers are verified & trusted</span>
+        </div>
       </div>
-      <div class="stat">
-        <span class="stat-number">50+</span>
-        <span class="stat-label">Dealers</span>
+      <div class="trust-item">
+        <div class="trust-icon">
+          <i data-lucide="indian-rupee" class="icon"></i>
+        </div>
+        <div class="trust-text">
+          <strong>Best Prices</strong>
+          <span>Ex-showroom prices, no hidden charges</span>
+        </div>
       </div>
-      <div class="stat">
-        <span class="stat-number">20+</span>
-        <span class="stat-label">Brands</span>
-      </div>
-      <div class="stat">
-        <span class="stat-number">15+</span>
-        <span class="stat-label">Cities</span>
+      <div class="trust-item">
+        <div class="trust-icon">
+          <i data-lucide="truck" class="icon"></i>
+        </div>
+        <div class="trust-text">
+          <strong>Doorstep Delivery</strong>
+          <span>Get your car delivered to your home</span>
+        </div>
       </div>
     </div>
   </section>
@@ -160,7 +200,7 @@
           <button class="btn btn-ghost btn-block" id="skip-otp-btn">Skip for now</button>
           <p class="consent-text">
             <i data-lucide="shield-check" class="icon-sm"></i>
-            Your number is safe with us. We only use it to connect you with dealers. No spam.
+            Your number is safe with us. We only use it to connect you with dealers. No spam guaranteed.
           </p>
         </div>
         <div class="otp-step" id="otp-step-2" style="display:none;">
@@ -186,27 +226,23 @@
   <section class="cars-section" id="cars-section">
     <div class="section-container">
       <div class="section-header">
-        <h2 class="section-title">Browse Cars</h2>
-        <p class="section-subtitle">Explore the best deals on new and pre-owned vehicles</p>
+        <h2 class="section-title">Available Cars Near You</h2>
+        <p class="section-subtitle">Explore the best deals on new cars from verified dealers</p>
+      </div>
+
+      <!-- Quick Type Tabs -->
+      <div class="type-tabs" id="type-tabs">
+        <button class="type-tab active" data-type="all">All</button>
+        <button class="type-tab" data-type="supercar">Supercars</button>
+        <button class="type-tab" data-type="luxury">Luxury</button>
+        <button class="type-tab" data-type="suv">SUVs</button>
+        <button class="type-tab" data-type="sedan">Sedans</button>
+        <button class="type-tab" data-type="hatchback">Hatchbacks</button>
+        <button class="type-tab" data-type="mpv">MPVs</button>
       </div>
 
       <!-- Filters -->
       <div class="filters" id="filters">
-        <div class="filter-group">
-          <label for="filter-type">
-            <i data-lucide="car" class="icon-sm"></i> Type
-          </label>
-          <select id="filter-type" class="filter-select">
-            <option value="all">All Types</option>
-            <option value="supercar">Supercar</option>
-            <option value="luxury">Luxury</option>
-            <option value="suv">SUV</option>
-            <option value="sedan">Sedan</option>
-            <option value="hatchback">Hatchback</option>
-            <option value="mpv">MPV</option>
-            <option value="pickup">Pickup</option>
-          </select>
-        </div>
         <div class="filter-group">
           <label for="filter-brand">
             <i data-lucide="tag" class="icon-sm"></i> Brand
@@ -242,7 +278,7 @@
         </div>
         <div class="filter-group">
           <label for="filter-sort">
-            <i data-lucide="arrow-up-down" class="icon-sm"></i> Sort
+            <i data-lucide="arrow-up-down" class="icon-sm"></i> Sort By
           </label>
           <select id="filter-sort" class="filter-select">
             <option value="default">Featured</option>
@@ -258,7 +294,7 @@
 
       <!-- Results Count -->
       <div class="results-bar">
-        <span id="results-count">Showing 12 cars</span>
+        <span id="results-count">Showing 18 cars</span>
         <span class="results-location" id="results-location"></span>
       </div>
 
@@ -289,21 +325,27 @@
       <div class="steps-grid">
         <div class="step-card">
           <div class="step-number">1</div>
-          <div class="step-icon">📍</div>
-          <h3>Share Your Location</h3>
-          <p>Allow location access so we can find the best deals from dealers and showrooms near you. Your privacy is our priority.</p>
+          <div class="step-icon">
+            <i data-lucide="map-pin" class="icon-xl"></i>
+          </div>
+          <h3>Allow Location</h3>
+          <p>When you open the website, allow location access so we can find the best deals from dealers and showrooms near you. Your privacy is our top priority.</p>
         </div>
         <div class="step-card">
           <div class="step-number">2</div>
-          <div class="step-icon">🚗</div>
+          <div class="step-icon">
+            <i data-lucide="car" class="icon-xl"></i>
+          </div>
           <h3>Browse & Compare</h3>
-          <p>Explore hundreds of cars with filters for type, brand, and price. Compare ex-showroom prices and find your perfect match.</p>
+          <p>Explore hundreds of cars with smart filters for type, brand, and budget. Compare ex-showroom prices and find your perfect match.</p>
         </div>
         <div class="step-card">
           <div class="step-number">3</div>
-          <div class="step-icon">📝</div>
-          <h3>Order Now</h3>
-          <p>Hit "Order Now" and fill in your details. We'll connect you with the nearest dealer for a seamless buying experience.</p>
+          <div class="step-icon">
+            <i data-lucide="credit-card" class="icon-xl"></i>
+          </div>
+          <h3>Book Your Car</h3>
+          <p>Tap "Get Best Price" and share your details. We will connect you with the nearest dealer for a seamless buying experience.</p>
         </div>
       </div>
     </div>
@@ -318,8 +360,8 @@
         <i data-lucide="x" class="icon"></i>
       </button>
       <div class="modal-header">
-        <h3>🚘 Order Inquiry</h3>
-        <p id="modal-car-name">Car Model</p>
+        <h3>Get Best Price</h3>
+        <p id="modal-car-name" class="modal-car-name">Car Model</p>
         <p id="modal-car-price" class="modal-price"></p>
       </div>
       <form class="modal-form" id="order-form">
@@ -336,7 +378,7 @@
         </div>
         <div class="input-group">
           <label for="order-location">Your Location</label>
-          <input type="text" id="order-location" class="input-field" placeholder="Auto-detecting..." readonly>
+          <input type="text" id="order-location" class="input-field" placeholder="Detecting..." readonly>
         </div>
         <div class="input-group">
           <label for="order-notes">Additional Notes (Optional)</label>
@@ -344,18 +386,20 @@
         </div>
         <button type="submit" class="btn btn-primary btn-block btn-lg">
           <i data-lucide="send" class="icon"></i>
-          Submit Inquiry
+          Get Dealer Callback
         </button>
         <p class="consent-text">
-          <i data-lucide="shield-check" class="icon-sm"></i>
-          Your details will be shared with the nearest dealer. We respect your privacy.
+          <i data-lucide="lock" class="icon-sm"></i>
+          Your details are shared only with the nearest verified dealer. We respect your privacy.
         </p>
       </form>
       <div class="modal-success" id="modal-success" style="display:none;">
-        <div class="success-icon">✅</div>
-        <h3>Inquiry Submitted!</h3>
-        <p>A dealer near you will contact you shortly with the best offer.</p>
-        <button class="btn btn-outline" id="modal-done-btn">Done</button>
+        <div class="success-icon">
+          <i data-lucide="check-circle-2" class="icon-xl green"></i>
+        </div>
+        <h3>Request Submitted!</h3>
+        <p>A verified dealer near you will contact you shortly with the best price offer.</p>
+        <button class="btn btn-primary" id="modal-done-btn">Done</button>
       </div>
     </div>
   </div>
@@ -366,31 +410,43 @@
   <footer class="footer">
     <div class="footer-container">
       <div class="footer-brand">
-        <span class="nav-logo">🚗</span>
-        <span class="nav-title">NearbyCars <span class="accent">Live</span></span>
-        <p class="footer-desc">Discover the best cars from trusted dealers near you in India.</p>
+        <div class="nav-logo-wrapper">
+          <svg class="nav-logo-svg" viewBox="0 0 32 32" fill="none">
+            <rect width="32" height="32" rx="8" fill="#E23744"/>
+            <text x="16" y="22" text-anchor="middle" fill="white" font-size="16" font-weight="900" font-family="Inter,sans-serif">C</text>
+          </svg>
+        </div>
+        <div class="nav-title-group">
+          <span class="nav-title">Cars24</span>
+          <span class="nav-subtitle">India</span>
+        </div>
+        <p class="footer-desc">India's most trusted car marketplace. Find your next car from verified dealers at the best prices.</p>
       </div>
       <div class="footer-links">
         <h4>Quick Links</h4>
         <a href="#cars-section">Browse Cars</a>
         <a href="#how-it-works">How It Works</a>
+        <a href="#">Sell Your Car</a>
+        <a href="#">Compare Cars</a>
       </div>
       <div class="footer-links">
-        <h4>Car Types</h4>
+        <h4>Popular Brands</h4>
         <a href="#" onclick="setFilter('supercar');return false;">Supercars</a>
         <a href="#" onclick="setFilter('suv');return false;">SUVs</a>
-        <a href="#" onclick="setFilter('luxury');return false;">Luxury</a>
+        <a href="#" onclick="setFilter('luxury');return false;">Luxury Cars</a>
         <a href="#" onclick="setFilter('sedan');return false;">Sedans</a>
+        <a href="#" onclick="setFilter('hatchback');return false;">Hatchbacks</a>
       </div>
       <div class="footer-links">
-        <h4>Legal</h4>
+        <h4>Support</h4>
+        <a href="#">Help Center</a>
         <a href="#">Privacy Policy</a>
         <a href="#">Terms of Service</a>
-        <a href="#">Cookie Policy</a>
+        <a href="#">Contact Us</a>
       </div>
     </div>
     <div class="footer-bottom">
-      <p>&copy; 2025 NearbyCars Live. All rights reserved. | Made with ❤️ in India</p>
+      <p>&copy; 2025 Cars24 India. All rights reserved.</p>
     </div>
   </footer>
 
