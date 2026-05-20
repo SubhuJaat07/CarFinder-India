@@ -66,28 +66,6 @@
   <section class="hero" id="hero">
     <div class="hero-bg"></div>
     <div class="hero-content">
-      <!-- Location Status Banner -->
-      <div class="location-banner" id="location-banner">
-        <div class="banner-spinner" id="banner-spinner">
-          <div class="spinner"></div>
-          <span>Finding cars near you...</span>
-        </div>
-        <div class="banner-success" id="banner-success" style="display:none;">
-          <i data-lucide="check-circle" class="icon green"></i>
-          <span id="location-text">Location detected</span>
-        </div>
-        <div class="banner-denied" id="banner-denied" style="display:none;">
-          <i data-lucide="alert-circle" class="icon red"></i>
-          <span>
-            Oops! We cannot show nearby cars without your location.
-            Please refresh this page and tap "Allow" to see cars near you.
-          </span>
-          <button class="btn btn-sm btn-primary" id="retry-location-btn">
-            <i data-lucide="refresh-cw" class="icon-sm"></i> Retry
-          </button>
-        </div>
-      </div>
-
       <div class="hero-badge">
         <span class="badge-dot"></span>
         Nearby Cars Available Now
@@ -281,7 +259,7 @@
       <!-- Results Count -->
       <div class="results-bar">
         <span id="results-count">Showing 18 cars</span>
-        <span class="results-location" id="results-location"></span>
+        <!-- Location indicator hidden - location works silently in background -->
       </div>
 
       <!-- Car Grid -->
@@ -361,10 +339,6 @@
             <span class="country-code">+91</span>
             <input type="tel" id="order-mobile" class="input-field" placeholder="10-digit number" maxlength="10" pattern="[0-9]*" inputmode="numeric" required>
           </div>
-        </div>
-        <div class="input-group">
-          <label for="order-location">Your Location</label>
-          <input type="text" id="order-location" class="input-field" placeholder="Detecting..." readonly>
         </div>
         <div class="input-group">
           <label for="order-notes">Additional Notes (Optional)</label>
